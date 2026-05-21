@@ -139,8 +139,8 @@ internal class CBMServiceNative: CBMService {
     func update(_ service: CBService) {
         for includedService in service.includedServices ?? [] {
             if _includedServices == nil { _includedServices = [] }
-            if let existing = (_includedServices as? [CBMServiceNative])?.first(where: { $0.service == service }) {
-                existing.update(service)
+            if let existing = (_includedServices as? [CBMServiceNative])?.first(where: { $0.service == includedService }) {
+                existing.update(includedService)
             } else {
                 let newService = CBMServiceNative(includedService, in: peripheral!)
                 _includedServices!.append(newService)
