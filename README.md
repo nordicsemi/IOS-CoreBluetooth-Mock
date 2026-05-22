@@ -184,3 +184,11 @@ A simplified proprietary service by Nordic Semiconductor, containing two charact
   - Changing the value of the Toggle switch will turn LED 3 on or off.
   - Pressing Button 1 on the Development Kit will show the button state as Pressed on the app.
   - Releasing Button 1 will show the state as Released on the App.
+
+## Special Thanks
+
+On behalf of Nordic and all the maintainers of this repo, we'd like to [thank all contributors](https://github.com/nordicsemi/IOS-CoreBluetooth-Mock/graphs/contributors) for their contributions.
+
+<a href="https://github.com/nordicsemi/IOS-CoreBluetooth-Mock/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=nordicsemi/IOS-CoreBluetooth-Mock" />
+</a>
