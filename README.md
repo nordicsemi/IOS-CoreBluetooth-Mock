@@ -1,9 +1,13 @@
 # Core Bluetooth Mock
 
-![Version number](https://img.shields.io/cocoapods/v/CoreBluetoothMock) 
 [![Platform](https://img.shields.io/cocoapods/p/CoreBluetoothMock.svg?style=flat)](https://github.com/nordicsemi/IOS-CoreBluetooth-Mock)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![SPM compatible](https://img.shields.io/badge/SPM-compatible-green?style=flat)](https://swift.org/package-manager)
+![Version number](https://img.shields.io/cocoapods/v/CoreBluetoothMock) 
+[![Release](https://img.shields.io/github/release/nordicsemi/IOS-CoreBluetooth-Mock.svg)](https://github.com/nordicsemi/IOS-CoreBluetooth-Mock/releases)
+[![GitHub stars](https://img.shields.io/github/stars/nordicsemi/IOS-CoreBluetooth-Mock)](https://github.com/nordicsemi/CoreBluetoothMock/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/nordicsemi/IOS-CoreBluetooth-Mock)](https://github.com/nordicsemi/IOS-CoreBluetooth-Mock/members)
+[![GitHub contributors](https://img.shields.io/github/contributors/nordicsemi/IOS-CoreBluetooth-Mock)](https://github.com/nordicsemi/IOS-CoreBluetooth-Mock/graphs/contributors)
 
 The *Core Bluetooth Mock* library was designed to emulate *Core Bluetooth* objects, providing easy way to test 
 Bluetooth-enabled apps. As the native Bluetooth API is not supported on a simulator, using this library you can run, test 
