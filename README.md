@@ -118,9 +118,10 @@ The documentation of the library is available [here](https://nordicsemi.github.i
 
 ## Migration from *CoreBluetooth*
 
-Migration example is available [here](https://github.com/nordicsemi/IOS-CoreBluetooth-Mock-Example).
-See [Pull Request #1](https://github.com/nordicsemi/IOS-CoreBluetooth-Mock-Example/pull/1) for 
-step-by-step guide.
+We have a couple of examples that show migrations from the platform's `CoreBluetooth` import to `CoreBluetoothMock`:
+
+- [nRF Connect Device Manager](https://apps.apple.com/es/app/nrf-connect-device-manager/id1519423539) has migrated to aid in UI-level testing as well as being able to run the app in the Simulator. You can find the appropriate [Pull Request here](https://github.com/nordicsemi/IOS-nRF-Connect-Device-Manager/pull/590).
+- CoreBluetooth-Mock-Example is available [here](https://github.com/nordicsemi/IOS-CoreBluetooth-Mock-Example). There is also a step-by-step guide available via this [Pull Request](https://github.com/nordicsemi/IOS-CoreBluetooth-Mock-Example/pull/1).
 
 > [!Note]
 > The migration example application currently does not use mocks in tests. 
