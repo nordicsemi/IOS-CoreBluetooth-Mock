@@ -45,7 +45,7 @@ public class UART {
     
     // MARK: init
     
-    init(name: String = "Nordic_UART") {
+    public init(name: String = "Nordic_UART") {
         self.isNotificationEnabled = false
         self.messageCounter = 0
         self.name = name
