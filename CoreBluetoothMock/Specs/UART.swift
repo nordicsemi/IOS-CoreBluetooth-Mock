@@ -36,12 +36,9 @@ public class UART {
     
     // MARK: Private
     
+    private let name: String
     private var isNotificationEnabled: Bool
     private var messageCounter: Int
-    
-    // MARK: Properties
-    
-    public let name: String
     
     // MARK: init
     
