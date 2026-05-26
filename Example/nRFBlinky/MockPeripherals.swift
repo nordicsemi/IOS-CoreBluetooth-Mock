@@ -33,109 +33,32 @@ import CoreBluetoothMock
 
 // MARK: - Mock nRF Blinky
 
-extension CBMUUID {
-    static let nordicBlinkyService  = CBMUUID(string: "00001523-1212-EFDE-1523-785FEABCD123")
-    static let buttonCharacteristic = CBMUUID(string: "00001524-1212-EFDE-1523-785FEABCD123")
-    static let ledCharacteristic    = CBMUUID(string: "00001525-1212-EFDE-1523-785FEABCD123")
-}
+/// A wrapper around the Blinky peripheral spec, that allows simulating button clicks
+/// or providing high-level behavior.
+///
+/// This is how you may simulate Button click using a mock Blinky:
+///
+/// ```swift
+/// blinkyImpl.simulateButtonToggle()
+/// ```
+private let blinkyImpl = Blinky(
+//    identifier: UUID(),
+//    name: "Nordic_Blinky",
+//    proximity: .immediate,
+//    delegate: PeriodicBlinkyDelegate(
+//        releasedDuration: 2,
+//        pressedDuration: 0.5,
+//    )
+)
 
-extension CBMCharacteristicMock {
-    
-    static let buttonCharacteristic = CBMCharacteristicMock(
-        type: .buttonCharacteristic,
-        properties: [.notify, .read],
-        descriptors: CBMClientCharacteristicConfigurationDescriptorMock()
-    )
-
-    static let ledCharacteristic = CBMCharacteristicMock(
-        type: .ledCharacteristic,
-        properties: [.write, .read]
-    )
-    
-}
-
-extension CBMServiceMock {
-
-    static let blinkyService = CBMServiceMock(
-        type: .nordicBlinkyService, primary: true,
-        characteristics:
-            .buttonCharacteristic,
-            .ledCharacteristic
-    )
-    
-}
-
-private class BlinkyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
-    private var ledEnabled: Bool = false
-    private var buttonPressed: Bool = false
-    
-    private var ledData: Data {
-        return ledEnabled ? Data([0x01]) : Data([0x00])
-    }
-    
-    private var buttonData: Data {
-        return buttonPressed ? Data([0x01]) : Data([0x00])
-    }
-
-    func reset() {
-        ledEnabled = false
-        buttonPressed = false
-        print("""
-        ----------------------------------------
-        *** Booting Mock LBS sample v1.0 ***
-        Starting Bluetooth Peripheral LBS sample
-        Bluetooth initialized
-        Advertising successfully started
-        ----------------------------------------
-        """)
-    }
-
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveReadRequestFor characteristic: CBMCharacteristicMock)
-            -> Result<Data, Error> {
-        if characteristic.uuid == .ledCharacteristic {
-            return .success(ledData)
-        } else {
-            return .success(buttonData)
-        }
-    }
-    
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveWriteRequestFor characteristic: CBMCharacteristicMock,
-                    data: Data) -> Result<Void, Error> {
-        if data.count > 0 {
-            ledEnabled = data[0] != 0x00
-        }
-        return .success(())
-    }
-    
-    func peripheral(_ peripheral: CBMPeripheralSpec, didDisconnect error: (any Error)?) {
-        print("Central disconnected with error: \(error?.localizedDescription ?? "none")")
-    }
-}
-
-let blinky = CBMPeripheralSpec
-    .simulatePeripheral(proximity: .outOfRange)
-    .advertising(
-        advertisementData: [
-            CBMAdvertisementDataLocalNameKey    : "nRF Blinky",
-            CBMAdvertisementDataServiceUUIDsKey : [CBMUUID.nordicBlinkyService],
-            CBMAdvertisementDataIsConnectable   : true as NSNumber
-        ],
-        withInterval: 0.250,
-        alsoWhenConnected: false)
-    .connectable(
-        name: "nRF Blinky",
-        services: [.blinkyService],
-        delegate: BlinkyCBMPeripheralSpecDelegate(),
-        connectionInterval: 0.150,
-        supervisionTimeout: 0,
-        mtu: 23)
-    .build()
-
-// This is how you may simulate Button click using a mock Blinky:
-//
-// blinky.simulateValueUpdate(Data([0x01]), for: .buttonCharacteristic)
+/// The *Blinky* spec peripheral is used for mock Central Manager.
+///
+/// This is how you may simulate Button click using a mock Blinky:
+///
+/// ```swift
+/// blinky.simulateValueUpdate(Data([0x01]), for: .buttonCharacteristic)
+/// ```
+let blinky = blinkyImpl.spec
 
 // MARK: - Mock Nordic HRM
 
