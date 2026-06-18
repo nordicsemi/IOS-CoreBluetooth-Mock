@@ -1639,6 +1639,18 @@ open class CBMCentralManagerMock: CBMCentralManager {
         fatalError("L2CAP mock is not implemented")
     }
     
+    #if !os(macOS)
+    @available(iOS 27.0, *)
+    open func startChannelSoundingSession(_ config: CBMChannelSoundingSessionConfiguration) {
+        fatalError("Channel Sounding mock is not implemented")
+    }
+    
+    @available(iOS 27.0, *)
+    open func cancelChannelSoundingSession() {
+        fatalError("Channel Sounding mock is not implemented")
+    }
+    #endif
+    
     open override var hash: Int {
         return mock.identifier.hashValue
     }

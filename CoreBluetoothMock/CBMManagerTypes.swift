@@ -108,6 +108,12 @@ public typealias CBML2CAPChannel = CBL2CAPChannel
 /// The current authorization state of a Core Bluetooth manager.
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public typealias CBMManagerAuthorization = CBManagerAuthorization
+/// The channel sounding role a CBPeripheral should assume for a given session.
+@available(iOS 27.0, *)
+public typealias CBMChannelSoundingSessionConfiguration = CBChannelSoundingSessionConfiguration
+/// The measured distance in meters of a CBPeripheral.
+@available(iOS 27.0, *)
+public typealias CBMChannelSoundingProcedureResults = CBChannelSoundingProcedureResults
 
 /// A Boolean value that specifies whether the scan should run without duplicate filtering.
 ///

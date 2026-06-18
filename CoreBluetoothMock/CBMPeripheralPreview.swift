@@ -118,6 +118,18 @@ import CoreBluetooth
     open func openL2CAPChannel(_ PSM: CBML2CAPPSM) {
         fatalError("Not available")
     }
+    
+    #if !os(macOS)
+    @available(iOS 27.0, *)
+    open func startChannelSoundingSession(_ config: CBMChannelSoundingSessionConfiguration) {
+        fatalError("Not available")
+    }
+    
+    @available(iOS 27.0, *)
+    open func cancelChannelSoundingSession() {
+        fatalError("Not available")
+    }
+    #endif
 }
 /*
 extension CBMPeripheralPreview: Hashable {

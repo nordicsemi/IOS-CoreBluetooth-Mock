@@ -270,5 +270,15 @@ public protocol CBMPeripheral: AnyObject {
     /// - Parameter PSM: The PSM of the channel to open.
     @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     func openL2CAPChannel(_ PSM: CBML2CAPPSM)
+    
+    /// Initiate a channel sounding session.
+    /// - Parameters:
+    ///     - config: An object specifying the channel sounding session configuration.
+    @available(iOS 27.0, *)
+    func startChannelSoundingSession(_ config: CBMChannelSoundingSessionConfiguration)
+    
+    /// Cancels the active channel sounding session, if it exists.
+    @available(iOS 27.0, *)
+    func cancelChannelSoundingSession()
     #endif
 }

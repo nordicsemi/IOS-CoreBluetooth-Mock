@@ -162,6 +162,21 @@ public protocol CBMPeripheralDelegate: AnyObject {
     @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     func peripheral(_ peripheral: CBMPeripheral,
                     didOpen channel: CBML2CAPChannel?, error: Error?)
+    
+    /// This method returns the results of a channel sounding procedure.
+    /// - Parameters:
+    ///     - peripheral: The peripheral providing this information.
+    ///     - results: A ``CBMChannelSoundingProcedureResults`` object.
+    @available(iOS 27.0, *)
+    func peripheral(_ peripheral: CBMPeripheral,
+                    didReceive results: CBMChannelSoundingProcedureResults?, error: Error?)
+    
+    /// This method returns when channel sounding completes.
+    /// - Parameters:
+    ///     - peripheral The peripheral providing this information.
+    ///     - error: If an error occurred, the cause of the failure.
+    @available(iOS 27.0, *)
+    func peripheral(_ peripheral: CBMPeripheral, didCompleteChannelSoundingSession error: Error?)
 }
 
 public extension CBMPeripheralDelegate {
@@ -232,6 +247,17 @@ public extension CBMPeripheralDelegate {
     @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     func peripheral(_ peripheral: CBMPeripheral,
                     didOpen channel: CBML2CAPChannel?, error: Error?) {
+        // optional method
+    }
+    
+    @available(iOS 27.0, *)
+    func peripheral(_ peripheral: CBMPeripheral,
+                    didReceive results: CBMChannelSoundingProcedureResults?, error: Error?) {
+        // optional method
+    }
+    
+    @available(iOS 27.0, *)
+    func peripheral(_ peripheral: CBMPeripheral, didCompleteChannelSoundingSession error: Error?) {
         // optional method
     }
 }

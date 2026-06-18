@@ -507,6 +507,21 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
             impl.delegate?.peripheral(impl, didOpen: channel, error: error)
         }
         
+        #if !os(macOS)
+        @available(iOS 27.0, *)
+        func peripheral(_ peripheral: CBPeripheral,
+                        didReceive results: CBChannelSoundingProcedureResults?,
+                        error: Error?) {
+            impl.delegate?.peripheral(impl, didReceive: results, error: error)
+        }
+        
+        @available(iOS 27.0, *)
+        func peripheral(_ peripheral: CBPeripheral,
+                        didCompleteChannelSoundingSession error: Error?) {
+            impl.delegate?.peripheral(impl, didCompleteChannelSoundingSession: error)
+        }
+        #endif
+        
         /// Updates the local list of services with received ones.
         /// - Parameter services: New list of services.
         private func smartCopy(_ services: [CBService]?) {
@@ -707,6 +722,16 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
     @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     public func openL2CAPChannel(_ PSM: CBML2CAPPSM) {
         peripheral.openL2CAPChannel(PSM)
+    }
+    
+    @available(iOS 27.0, *)
+    public func startChannelSoundingSession(_ config: CBMChannelSoundingSessionConfiguration) {
+        peripheral.startChannelSoundingSession(config)
+    }
+    
+    @available(iOS 27.0, *)
+    public func cancelChannelSoundingSession() {
+        peripheral.cancelChannelSoundingSession()
     }
     #endif
     

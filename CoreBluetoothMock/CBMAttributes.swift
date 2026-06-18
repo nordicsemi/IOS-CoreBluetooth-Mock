@@ -580,6 +580,16 @@ fileprivate class CBMPeripheralUninitialized: CBMPeripheral, CustomDebugStringCo
     @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     func openL2CAPChannel(_ PSM: CBML2CAPPSM) { uninitialized() }
     
+    #if !os(macOS)
+    @available(iOS 27.0, *)
+    func startChannelSoundingSession(_ config: CBMChannelSoundingSessionConfiguration) {
+        uninitialized()
+    }
+    
+    @available(iOS 27.0, *)
+    func cancelChannelSoundingSession() { uninitialized() }
+    #endif
+    
     func uninitialized() -> Never {
         fatalError("Uninitialized")
     }
