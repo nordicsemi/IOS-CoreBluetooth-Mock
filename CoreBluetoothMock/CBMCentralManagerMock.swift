@@ -1278,7 +1278,22 @@ open class CBMCentralManagerMock: CBMCentralManager {
         }
         
     }
-    
+
+    private func newCharacteristics(_ characteristicUUIDs: [CBMUUID]?,
+                                    for service: CBMService,
+                                    upon mockCharacteristics: [CBMCharacteristic]) -> [CBMCharacteristic] {
+        return service._characteristics! +
+            mockCharacteristics
+                // Filter all service characteristics that match given list (if set).
+                .filter { characteristicUUIDs == nil || characteristicUUIDs!.isEmpty || characteristicUUIDs!.contains($0.uuid) }
+                // Filter those of them, that are not already in discovered characteristics.
+                .filter { c in !service._characteristics!
+                    .contains { dc in c.identifier == dc.identifier }
+                }
+                // Copy the characteristic info, without included descriptors or value.
+                .map { CBMCharacteristic(shallowCopy: $0, in: service) }
+    }
+
     open func discoverCharacteristics(_ characteristicUUIDs: [CBMUUID]?,
                                         for service: CBMService) {
         // Central manager must be in powered on state.
@@ -1300,22 +1315,14 @@ open class CBMCentralManagerMock: CBMCentralManager {
         case .success:
             service._characteristics = service._characteristics ?? []
             let initialSize = service._characteristics!.count
-            service._characteristics = service._characteristics! +
-                mockCharacteristics
-                    // Filter all service characteristics that match given list (if set).
-                    .filter { characteristicUUIDs == nil || characteristicUUIDs!.isEmpty || characteristicUUIDs!.contains($0.uuid) }
-                    // Filter those of them, that are not already in discovered characteristics.
-                    .filter { c in !service._characteristics!
-                        .contains { dc in c.identifier == dc.identifier }
-                    }
-                    // Copy the characteristic info, without included descriptors or value.
-                    .map { CBMCharacteristic(shallowCopy: $0, in: service) }
-            let newCharacteristicsCount = service._characteristics!.count - initialSize
+            let newCharacteristics = newCharacteristics(characteristicUUIDs, for: service, upon: mockCharacteristics)
+            let newCharacteristicsCount = newCharacteristics.count - initialSize
             // Characteristics discovery may takes the more time, the more characteristics
             // are discovered.
             let delay = interval * Double(newCharacteristicsCount)
             queue.asyncAfter(deadline: .now() + delay) { [weak self] in
                 if let self = self, self.state == .connected {
+                    service._characteristics = self.newCharacteristics(characteristicUUIDs, for: service, upon: mockCharacteristics)
                     self.delegate?.peripheral(self,
                                               didDiscoverCharacteristicsFor: service,
                                               error: nil)
