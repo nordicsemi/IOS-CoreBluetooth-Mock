@@ -66,7 +66,7 @@ class NormalBehaviorTest: XCTestCase {
         // Wait until the blinky is found.
         var target: BlinkyPeripheral?
         let found = XCTestExpectation(description: "Device found")
-        Sim.onBlinkyDiscovery { blinky in
+        let discoveryObserver = Sim.onBlinkyDiscovery { blinky in
             XCTAssertEqual(blinky.advertisedName, "nRF Blinky")
             XCTAssert(blinky.isConnectable == true)
             XCTAssert(blinky.isConnected == false)
@@ -76,6 +76,9 @@ class NormalBehaviorTest: XCTestCase {
             found.fulfill()
         }
         wait(for: [found], timeout: 3)
+        // Dispose here too, in case the wait above timed out without firing the observer,
+        // so it doesn't leak into and affect subsequent tests.
+        Sim.dispose(discoveryObserver)
         XCTAssertNotNil(target, "nRF Blinky not found. Make sure you run the test on a simulator.")
         if target == nil {
             // Going further would cause a crash.
@@ -100,8 +103,8 @@ class NormalBehaviorTest: XCTestCase {
         Sim.dispose(connectionObserver)
         Sim.dispose(readyObserver)
 
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let navigationController = appDelegate.window!.rootViewController as! UINavigationController
+        let windowScene = UIApplication.shared.connectedScenes.first as! UIWindowScene
+        let navigationController = windowScene.windows.first!.rootViewController as! UINavigationController
         let blinkyViewController = navigationController.topViewController as! BlinkyViewController
 
         // Initially, after reset, LED is OFF and button is released.
@@ -147,6 +150,11 @@ class NormalBehaviorTest: XCTestCase {
         blinky.simulateDisconnection()
         wait(for: [disconnection], timeout: 1)
         Sim.dispose(disconnectionObserver)
+
+        // Auto Reconnect is enabled for this connection, so the disconnect above
+        // leaves BlinkyManager.connectedBlinky set (isReconnecting == true). Cancel
+        // it explicitly, otherwise it would block the next test's connection attempt.
+        target!.disconnect()
 
         navigationController.popViewController(animated: true)
     }
