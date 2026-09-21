@@ -90,7 +90,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             thingy.simulateProximityChange(.far)
             
             // Simulate a reset after a while to make the device reconnect again:
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(3000)) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(9_000)) {
                 blinky.simulateReset()
             }
         }

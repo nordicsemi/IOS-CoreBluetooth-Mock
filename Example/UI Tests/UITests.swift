@@ -70,7 +70,7 @@ class UITests: XCTestCase {
         
         // The device is scheduled to reset after 3 seconds after test started.
         // An error message will show up. Use OK button to close it.
-        XCTAssert(app.buttons["OK"].waitForExistence(timeout: 2.0))
+        XCTAssert(app.buttons["OK"].waitForExistence(timeout: 9.0))
         app.buttons["OK"].tap()
         
         // Navigating back and disconnect.
