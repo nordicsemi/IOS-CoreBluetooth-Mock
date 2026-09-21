@@ -100,8 +100,8 @@ class ResetTest: XCTestCase {
         target!.dispose(o1)
         target!.dispose(o2)
 
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let navigationController = appDelegate.window!.rootViewController as! UINavigationController
+        let windowScene = UIApplication.shared.connectedScenes.first as! UIWindowScene
+        let navigationController = windowScene.windows.first!.rootViewController as! UINavigationController
 
         // Initially, LED is OFF and button is released.
         let ledDisabled = XCTestExpectation(description: "LED Disabled")

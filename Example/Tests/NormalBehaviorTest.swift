@@ -100,8 +100,8 @@ class NormalBehaviorTest: XCTestCase {
         Sim.dispose(connectionObserver)
         Sim.dispose(readyObserver)
 
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let navigationController = appDelegate.window!.rootViewController as! UINavigationController
+        let windowScene = UIApplication.shared.connectedScenes.first as! UIWindowScene
+        let navigationController = windowScene.windows.first!.rootViewController as! UINavigationController
         let blinkyViewController = navigationController.topViewController as! BlinkyViewController
 
         // Initially, after reset, LED is OFF and button is released.

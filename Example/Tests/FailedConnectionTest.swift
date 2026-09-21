@@ -99,8 +99,8 @@ class FailedConnectionTest: XCTestCase {
         wait(for: [connected], timeout: 3)
         Sim.dispose(connectionObserver)
 
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let navigationController = appDelegate.window!.rootViewController as! UINavigationController
+        let windowScene = UIApplication.shared.connectedScenes.first as! UIWindowScene
+        let navigationController = windowScene.windows.first!.rootViewController as! UINavigationController
         navigationController.popViewController(animated: true)
     }
 }

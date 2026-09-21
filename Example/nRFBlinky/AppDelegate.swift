@@ -34,11 +34,8 @@ import CoreBluetoothMock
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    // Required for the Storyboard to show up.
-    var window: UIWindow?
-    
     var mockingEnabled: Bool = false
-    
+
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // UI Tests can't access app code, so the Blinky mock must be in the app.
@@ -107,6 +104,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #endif
         
         return true
+    }
+
+    // MARK: - UISceneSession Lifecycle
+
+    func application(_ application: UIApplication,
+                      configurationForConnecting connectingSceneSession: UISceneSession,
+                      options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+    }
+
+    func application(_ application: UIApplication,
+                      didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
     }
 
 }
