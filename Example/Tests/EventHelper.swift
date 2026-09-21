@@ -45,15 +45,16 @@ class Sim {
         return NotificationCenter.default.addObserver(forName: name, object: nil, queue: nil, using: action)
     }
 
-    static func onBlinkyDiscovery(do action: @escaping (BlinkyPeripheral) -> ()) {
-        var observer: NSObjectProtocol?
+    static func onBlinkyDiscovery(do action: @escaping (BlinkyPeripheral) -> ()) -> NSObjectProtocol {
+        var observer: NSObjectProtocol!
         observer = on(.newPeripheral) { notification in
             if let userInfo = notification.userInfo,
                let blinky = userInfo["blinky"] as? BlinkyPeripheral {
                 action(blinky)
             }
-            dispose(observer!)
+            dispose(observer)
         }
+        return observer
     }
 
 }

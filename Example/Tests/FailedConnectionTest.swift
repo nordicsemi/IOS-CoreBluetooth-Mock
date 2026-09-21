@@ -67,7 +67,7 @@ class FailedConnectionTest: XCTestCase {
         // Wait until the blinky is found.
         var target: BlinkyPeripheral?
         let found = XCTestExpectation(description: "Device found")
-        Sim.onBlinkyDiscovery { blinky in
+        let discoveryObserver = Sim.onBlinkyDiscovery { blinky in
             XCTAssertEqual(blinky.advertisedName, "nRF Blinky")
             XCTAssert(blinky.isConnectable == true)
             XCTAssert(blinky.isConnected == false)
@@ -77,6 +77,9 @@ class FailedConnectionTest: XCTestCase {
             found.fulfill()
         }
         wait(for: [found], timeout: 3)
+        // Dispose here too, in case the wait above timed out without firing the observer,
+        // so it doesn't leak into and affect subsequent tests.
+        Sim.dispose(discoveryObserver)
         XCTAssertNotNil(target, "nRF Blinky not found. Make sure you run the test on a simulator.")
         if target == nil {
             // Going further would cause a crash.
@@ -98,6 +101,11 @@ class FailedConnectionTest: XCTestCase {
         // As the expectation is inverted, the wait should timeout.
         wait(for: [connected], timeout: 3)
         Sim.dispose(connectionObserver)
+
+        // Cancel the still-pending connection attempt. Otherwise the shared
+        // BlinkyManager keeps this peripheral as its "connectedBlinky" forever,
+        // blocking later tests from connecting to a freshly discovered instance.
+        target!.disconnect()
 
         let windowScene = UIApplication.shared.connectedScenes.first as! UIWindowScene
         let navigationController = windowScene.windows.first!.rootViewController as! UINavigationController

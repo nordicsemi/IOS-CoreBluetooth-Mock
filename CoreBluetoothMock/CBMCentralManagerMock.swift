@@ -135,8 +135,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
         guard config.delay > 0 || config.interval > 0 else {
             return
         }
-        // Timer works only on queues with a active run loop.
-        DispatchQueue.main.async {
+        let scheduleTimer = {
             // If the first advertising is to be delayed, create a
             // temporary timer that will call the initial data.
             if config.delay > 0 {
@@ -155,8 +154,17 @@ open class CBMCentralManagerMock: CBMCentralManager {
                     repeats: true)
             }
         }
+        // Timer works only on queues with a active run loop.
+        // If already on the main thread, schedule synchronously so this stays
+        // ordered with the (synchronous) invalidation done by stopAdvertising(),
+        // instead of racing with it via a queued, deferred block.
+        if Thread.isMainThread {
+            scheduleTimer()
+        } else {
+            DispatchQueue.main.async(execute: scheduleTimer)
+        }
     }
-    
+
     /// Stops all advertising of the given peripheral.
     /// - Parameter mock: The mock peripheral that changed advertising set.
     private static func stopAdvertising(of mock: CBMPeripheralSpec) {

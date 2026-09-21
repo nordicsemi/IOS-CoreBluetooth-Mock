@@ -153,11 +153,13 @@ class RetrievingDevicesTest: XCTestCase {
         // Define the CBMPeripheralDelegate, which will wait until the serivces are
         // discovered and will try to retrieve the device.
         let peripheralDelegate = CBMPeripheralDelegateProxy()
-        peripheralDelegate.didDiscoverServices = { peripheral, error in
+        // Captured weakly: `manager` -> peripheral -> peripheralDelegate -> this closure
+        // would otherwise be a retain cycle, leaking the manager into later tests.
+        peripheralDelegate.didDiscoverServices = { [weak manager] peripheral, error in
             XCTAssertNil(error)
             
             // HRM device should now be connected and retrievable.
-            let list = manager.retrieveConnectedPeripherals(withServices: [hrmServiceUUID])
+            let list = manager?.retrieveConnectedPeripherals(withServices: [hrmServiceUUID]) ?? []
             XCTAssertFalse(list.isEmpty)
             
             if !list.isEmpty {
