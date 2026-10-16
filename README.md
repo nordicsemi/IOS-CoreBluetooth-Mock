@@ -36,7 +36,7 @@ The *Core Bluetooth Mock* library is available only in *Swift*, and compatible w
 * iOS 12.0+[^1], 
 * macOS 10.14+, 
 * tvOS 12.0+[^1],
-* watchOS 4.0+
+* watchOS 9.0+[^2]
 
 (with some features available only on newer platforms).
 
@@ -44,6 +44,7 @@ The *Core Bluetooth Mock* library is available only in *Swift*, and compatible w
 > For projects running Objective-C we recommend https://github.com/Rightpoint/RZBluetooth library.
 
 [^1]: Xcode 15 dropped support for iOS 9.0 and tvOS 9.0 in simulator. Now the minimum supported version is 12.0 for both platforms.
+[^2]: Xcode 27 deprecated watchOS deployment targets older than 9.0.
 
 ## Installation
 
