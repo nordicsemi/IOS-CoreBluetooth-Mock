@@ -456,15 +456,16 @@ class PeripheralBehaviorTest: CentralBehaviorTestCase {
         XCTAssertEqual(peripheral.maximumWriteValueLength(for: .withoutResponse), 20)
     }
 
-    func testWriteDescriptorIsRejectedByDefault() throws {
+    func testWriteDescriptorError() throws {
         setUpManager()
+        device.descriptorWriteResult = .failure(CBMATTError(.writeNotPermitted))
         let peripheral = try connectAndDiscover()
         let characteristic = try characteristic(TestDevice.readChar, of: peripheral)
         let descriptor = try XCTUnwrap(characteristic.descriptors?.first)
 
         waitFor("Write failed") { failed in
             peripheralDelegate.didWriteDescriptorValue = { _, _, error in
-                XCTAssertNotNil(error)
+                XCTAssertEqual((error as? CBMATTError)?.code, .writeNotPermitted)
                 failed.fulfill()
             }
             peripheral.writeValue(Data([0x01]), for: descriptor)

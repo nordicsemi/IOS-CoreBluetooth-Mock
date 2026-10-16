@@ -17,6 +17,7 @@
 		7E5A01010000000000000B01 /* CentralManagerBehaviorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E5A00010000000000000A01 /* CentralManagerBehaviorTest.swift */; };
 		7E5A01020000000000000B02 /* PeripheralBehaviorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E5A00020000000000000A02 /* PeripheralBehaviorTest.swift */; };
 		7E5A0103000000000000000B /* PeripheralManagerBehaviorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E5A0003000000000000000A /* PeripheralManagerBehaviorTest.swift */; };
+		7E5A0104000000000000000B /* CentralManagerAdvancedBehaviorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E5A0004000000000000000A /* CentralManagerAdvancedBehaviorTest.swift */; };
 		52991CE726C26CE90029CD9E /* RetrievingDevicesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52991CE626C26CE90029CD9E /* RetrievingDevicesTest.swift */; };
 		52A128B726CD9AF800DE5F37 /* MultipleInstancesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A128B626CD9AF800DE5F37 /* MultipleInstancesTest.swift */; };
 		52A648F1240E83F000817F2F /* NormalBehaviorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A648F0240E83F000817F2F /* NormalBehaviorTest.swift */; };
@@ -79,6 +80,7 @@
 		7E5A00010000000000000A01 /* CentralManagerBehaviorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CentralManagerBehaviorTest.swift; sourceTree = "<group>"; };
 		7E5A00020000000000000A02 /* PeripheralBehaviorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeripheralBehaviorTest.swift; sourceTree = "<group>"; };
 		7E5A0003000000000000000A /* PeripheralManagerBehaviorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeripheralManagerBehaviorTest.swift; sourceTree = "<group>"; };
+		7E5A0004000000000000000A /* CentralManagerAdvancedBehaviorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CentralManagerAdvancedBehaviorTest.swift; sourceTree = "<group>"; };
 		52991CE626C26CE90029CD9E /* RetrievingDevicesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrievingDevicesTest.swift; sourceTree = "<group>"; };
 		52A128B626CD9AF800DE5F37 /* MultipleInstancesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleInstancesTest.swift; sourceTree = "<group>"; };
 		52A648E0240E7BDF00817F2F /* CoreBluetoothMock.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CoreBluetoothMock.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -202,6 +204,7 @@
 				7E5A00010000000000000A01 /* CentralManagerBehaviorTest.swift */,
 				7E5A00020000000000000A02 /* PeripheralBehaviorTest.swift */,
 				7E5A0003000000000000000A /* PeripheralManagerBehaviorTest.swift */,
+				7E5A0004000000000000000A /* CentralManagerAdvancedBehaviorTest.swift */,
 				52991CE626C26CE90029CD9E /* RetrievingDevicesTest.swift */,
 				52A128B626CD9AF800DE5F37 /* MultipleInstancesTest.swift */,
 				2DBB2F5ACA6DCE530B0DDE90 /* EventHelper.swift */,
@@ -638,6 +641,7 @@
 				7E5A01010000000000000B01 /* CentralManagerBehaviorTest.swift in Sources */,
 				7E5A01020000000000000B02 /* PeripheralBehaviorTest.swift in Sources */,
 				7E5A0103000000000000000B /* PeripheralManagerBehaviorTest.swift in Sources */,
+				7E5A0104000000000000000B /* CentralManagerAdvancedBehaviorTest.swift in Sources */,
 				52991CE726C26CE90029CD9E /* RetrievingDevicesTest.swift in Sources */,
 				2DBB258568F7E07E0DFA3B4E /* EventHelper.swift in Sources */,
 				52E905CE24DD35A100BB5740 /* FailedConnectionTest.swift in Sources */,
