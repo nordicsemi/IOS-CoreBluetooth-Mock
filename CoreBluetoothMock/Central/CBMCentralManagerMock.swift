@@ -1054,9 +1054,14 @@ open class CBMCentralManagerMock: CBMCentralManager {
         isReconnecting = false
         // Cancel pending connection.
         guard state != .connecting else {
-            state = .disconnected
-            queue.async {
-                completion()
+            // As in the native implementation, the state changes to
+            // `.disconnecting` and the delegate is notified afterwards.
+            state = .disconnecting
+            queue.async { [weak self] in
+                if let self = self, self.state == .disconnecting {
+                    self.state = .disconnected
+                    completion()
+                }
             }
             return
         }
@@ -1218,8 +1223,13 @@ open class CBMCentralManagerMock: CBMCentralManager {
                 if let self = self, self.state == .connected {
                     // The services become available when discovery completes.
                     let known = self.services ?? []
-                    self.services = known + newServices.filter { s in
+                    let added = newServices.filter { s in
                         !known.contains { $0.identifier == s.identifier }
+                    }
+                    // As in the native implementation, the services stay nil
+                    // when nothing was found.
+                    if !known.isEmpty || !added.isEmpty {
+                        self.services = known + added
                     }
                     self.delegate?.peripheral(self, didDiscoverServices: nil)
                 }
@@ -1269,8 +1279,11 @@ open class CBMCentralManagerMock: CBMCentralManager {
                 if let self = self, self.state == .connected {
                     // The services become available when discovery completes.
                     let known = service._includedServices ?? []
-                    service._includedServices = known + newServices.filter { s in
+                    let added = newServices.filter { s in
                         !known.contains { $0.identifier == s.identifier }
+                    }
+                    if !known.isEmpty || !added.isEmpty {
+                        service._includedServices = known + added
                     }
                     self.delegate?.peripheral(self,
                                               didDiscoverIncludedServicesFor: service,
@@ -1325,8 +1338,11 @@ open class CBMCentralManagerMock: CBMCentralManager {
                 if let self = self, self.state == .connected {
                     // The characteristics become available when discovery completes.
                     let known = service._characteristics ?? []
-                    service._characteristics = known + newCharacteristics.filter { c in
+                    let added = newCharacteristics.filter { c in
                         !known.contains { $0.identifier == c.identifier }
+                    }
+                    if !known.isEmpty || !added.isEmpty {
+                        service._characteristics = known + added
                     }
                     self.delegate?.peripheral(self,
                                               didDiscoverCharacteristicsFor: service,
@@ -1377,8 +1393,11 @@ open class CBMCentralManagerMock: CBMCentralManager {
                 if let self = self, self.state == .connected {
                     // The descriptors become available when discovery completes.
                     let known = characteristic._descriptors ?? []
-                    characteristic._descriptors = known + newDescriptors.filter { d in
+                    let added = newDescriptors.filter { d in
                         !known.contains { $0.identifier == d.identifier }
+                    }
+                    if !known.isEmpty || !added.isEmpty {
+                        characteristic._descriptors = known + added
                     }
                     self.delegate?.peripheral(self,
                                               didDiscoverDescriptorsFor: characteristic,

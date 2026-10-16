@@ -328,22 +328,29 @@ public class CBMCentralManagerNative: CBMCentralManager {
     
     @available(iOS 7.0, *)
     public override func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBMPeripheral] {
-        let retrievedPeripherals = manager.retrievePeripherals(withIdentifiers: identifiers)
-        retrievedPeripherals
-            .forEach { peripherals[$0.identifier] = CBMPeripheralNative($0) }
-        return peripherals
-            .filter { identifiers.contains($0.key) }
-            .map { $0.value }
+        return manager.retrievePeripherals(withIdentifiers: identifiers)
+            .map { peripheral(for: $0) }
     }
     
     @available(iOS 7.0, *)
     public override func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBMUUID]) -> [CBMPeripheral] {
-        let retrievedPeripherals = manager.retrieveConnectedPeripherals(withServices: serviceUUIDs)
-        retrievedPeripherals
-            .forEach { peripherals[$0.identifier] = CBMPeripheralNative($0) }
-        return peripherals
-            .filter { entry in retrievedPeripherals.contains(where: { $0.identifier == entry.key }) }
-            .map { $0.value }
+        return manager.retrieveConnectedPeripherals(withServices: serviceUUIDs)
+            .map { peripheral(for: $0) }
+    }
+    
+    /// Returns the wrapper of the given native peripheral.
+    ///
+    /// A wrapper is created only once for each native peripheral. Creating another one would
+    /// take over the delegate of the native peripheral and make the previous wrapper stop
+    /// receiving callbacks.
+    fileprivate func peripheral(for peripheral: CBPeripheral) -> CBMPeripheralNative {
+        if let cachedPeripheral = peripherals[peripheral.identifier],
+           cachedPeripheral.peripheral === peripheral {
+            return cachedPeripheral
+        }
+        let wrapper = CBMPeripheralNative(peripheral)
+        peripherals[peripheral.identifier] = wrapper
+        return wrapper
     }
     
     #if !os(macOS)

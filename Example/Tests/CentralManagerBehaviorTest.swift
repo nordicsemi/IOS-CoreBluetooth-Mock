@@ -329,7 +329,11 @@ class CentralManagerBehaviorTest: CentralBehaviorTestCase {
         manager.connect(peripheral)
         XCTAssertEqual(peripheral.state, .connecting)
 
-        manager.cancelPeripheralConnection(peripheral)
+        waitFor("Disconnected") { disconnected in
+            managerDelegate.didDisconnect = { _, _, _, _, _ in disconnected.fulfill() }
+            manager.cancelPeripheralConnection(peripheral)
+            XCTAssertEqual(peripheral.state, .disconnecting)
+        }
         XCTAssertEqual(peripheral.state, .disconnected)
 
         // Coming in range does not connect the device anymore.
