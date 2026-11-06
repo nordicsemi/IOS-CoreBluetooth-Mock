@@ -281,9 +281,12 @@ open class CBMCentralManagerMock: CBMCentralManager {
                     let rssi = mock.proximity.RSSI
                     let delta = CBMCentralManagerMock.rssiDeviation.value
                     let deviation = Int.random(in: -delta...delta)
-                    manager.delegate?.centralManager(manager, didDiscover: peripheral,
+                  
+                    manager.queue.async {
+                      manager.delegate?.centralManager(manager, didDiscover: peripheral,
                                                      advertisementData: config.data,
                                                      rssi: (rssi + deviation) as NSNumber)
+                    }
                     // The first scan result is returned without a name.
                     // This flag must then be called after it has been reported.
                     // Setting this flag will cause the advertising name to be
