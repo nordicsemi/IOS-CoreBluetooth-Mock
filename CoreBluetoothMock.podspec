@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'CoreBluetoothMock'
-  s.version          = '1.1.0'
+  s.version          = '1.1.1'
   s.summary          = 'Mocking library for CoreBluetooth.'
 
   s.description      = <<-DESC
