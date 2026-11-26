@@ -128,11 +128,31 @@ open class CBMCentralManagerMock: CBMCentralManager {
     
     /// Stops all advertising.
     private static func stopAdvertising() {
-        mutex.sync {
+        let timers = mutex.sync { () -> [Timer] in
             pendingAdvertisements.removeAll()
+            let timers = Array(advertisementTimers.values)
+            advertisementTimers.removeAll()
+            return timers
         }
-        advertisementTimers.forEach { $0.value.invalidate() }
-        advertisementTimers.removeAll()
+        invalidate(timers)
+    }
+    
+    /// Invalidates the timers on the main thread, where they were scheduled.
+    ///
+    /// Invalidating a timer on another thread may release its `userInfo` while
+    /// the main run loop is firing it. Timers that were removed from
+    /// ``advertisementTimers`` are ignored by their callbacks in the meantime.
+    private static func invalidate(_ timers: [Timer]) {
+        guard !timers.isEmpty else {
+            return
+        }
+        if Thread.isMainThread {
+            timers.forEach { $0.invalidate() }
+        } else {
+            DispatchQueue.main.async {
+                timers.forEach { $0.invalidate() }
+            }
+        }
     }
     
     /// Starts the given advertisement.
@@ -156,26 +176,66 @@ open class CBMCentralManagerMock: CBMCentralManager {
         // Timer works only on queues with a active run loop.
         DispatchQueue.main.async {
             // The advertisement could have been stopped, or replaced, in the meantime.
-            let isCurrent = mutex.sync { () -> Bool in
+            // The timer is stored under the same lock that checks the token, so that
+            // a concurrent stop either prevents it or finds it and invalidates it.
+            let replaced = mutex.sync { () -> [Timer] in
                 guard pendingAdvertisements[config] == token else {
-                    return false
+                    return []
                 }
                 pendingAdvertisements.removeValue(forKey: config)
-                return true
+                let replaced = advertisementTimers[config].map { [$0] } ?? []
+                // If the first advertising is to be delayed, create a
+                // temporary timer that will call the initial data.
+                if config.delay > 0 {
+                    advertisementTimers[config] = Timer.scheduledTimer(
+                        timeInterval: config.delay,
+                        target: self,
+                        selector: #selector(self.schedule(timer:)),
+                        userInfo: (mock, config),
+                        repeats: false)
+                } else {
+                    advertisementTimers[config] = Timer.scheduledTimer(
+                        timeInterval: config.interval,
+                        target: self,
+                        selector: #selector(self.notify(timer:)),
+                        userInfo: (mock, config),
+                        repeats: true)
+                }
+                return replaced
             }
-            guard isCurrent else {
-                return
-            }
-            // If the first advertising is to be delayed, create a
-            // temporary timer that will call the initial data.
-            if config.delay > 0 {
-                advertisementTimers[config] = Timer.scheduledTimer(
-                    timeInterval: config.delay,
-                    target: self,
-                    selector: #selector(self.schedule(timer:)),
-                    userInfo: (mock, config),
-                    repeats: false)
-            } else {
+            invalidate(replaced)
+        }
+    }
+    
+    /// Stops all advertising of the given peripheral.
+    /// - Parameter mock: The mock peripheral that changed advertising set.
+    private static func stopAdvertising(of mock: CBMPeripheralSpec) {
+        let timers = mutex.sync { () -> [Timer] in
+            mock.advertisement?.compactMap { config in
+                pendingAdvertisements.removeValue(forKey: config)
+                return advertisementTimers.removeValue(forKey: config)
+            } ?? []
+        }
+        invalidate(timers)
+    }
+    
+    /// This timer is fired when the initial delay has passed and the device starts
+    /// advertising with a advertisement config.
+    ///
+    /// The peripheral specification and advertising configuration is set as `userInfo`.
+    /// - Parameter timer: The timer that is fired.
+    @objc private static func schedule(timer: Timer) {
+        guard let (mock, config) = timer.userInfo as? (CBMPeripheralSpec, CBMAdvertisementConfig),
+              advertisementTimers[config] === timer else {
+            return
+        }
+        notify(config, for: mock)
+        
+        if config.interval > 0 {
+            mutex.sync {
+                guard advertisementTimers[config] === timer else {
+                    return
+                }
                 advertisementTimers[config] = Timer.scheduledTimer(
                     timeInterval: config.interval,
                     target: self,
@@ -186,47 +246,14 @@ open class CBMCentralManagerMock: CBMCentralManager {
         }
     }
     
-    /// Stops all advertising of the given peripheral.
-    /// - Parameter mock: The mock peripheral that changed advertising set.
-    private static func stopAdvertising(of mock: CBMPeripheralSpec) {
-        mock.advertisement?.forEach { config in
-            mutex.sync {
-                _ = pendingAdvertisements.removeValue(forKey: config)
-            }
-            advertisementTimers
-                .removeValue(forKey: config)?
-                .invalidate()
-        }
-    }
-    
-    /// This timer is fired when the initial delay has passed and the device starts
-    /// advertising with a advertisement config.
-    ///
-    /// The peripheral specification and advertising configuration is set as `userInfo`.
-    /// - Parameter timer: The timer that is fired.
-    @objc private static func schedule(timer: Timer) {
-        guard let (mock, config) = timer.userInfo as? (CBMPeripheralSpec, CBMAdvertisementConfig) else {
-            return
-        }
-        notify(config, for: mock)
-        
-        if config.interval > 0 {
-            advertisementTimers[config] = Timer.scheduledTimer(
-                timeInterval: config.interval,
-                target: self,
-                selector: #selector(self.notify(timer:)),
-                userInfo: (mock, config),
-                repeats: true)
-        }
-    }
-    
     /// This is a Timer callback, that's called to emulate scanning for Bluetooth LE
     /// devices.
     ///
     /// The peripheral specification and advertising configuration is set as `userInfo`.
     /// - Parameter timer: The timer that is fired.
     @objc private static func notify(timer: Timer) {
-        guard let (mock, config) = timer.userInfo as? (CBMPeripheralSpec, CBMAdvertisementConfig) else {
+        guard let (mock, config) = timer.userInfo as? (CBMPeripheralSpec, CBMAdvertisementConfig),
+              advertisementTimers[config] === timer else {
             return
         }
         notify(config, for: mock)
